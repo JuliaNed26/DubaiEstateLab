@@ -1,6 +1,6 @@
 ﻿namespace DubaiEstate.DAL.Models;
 
-public partial class Area
+public class Area
 {
     public long AreaId { get; set; }
 

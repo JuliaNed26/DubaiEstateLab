@@ -13,7 +13,7 @@ public class AreaConfiguration : IEntityTypeConfiguration<Area>
         builder.ToTable("Area");
 
         builder.Property(e => e.AreaId)
-            .ValueGeneratedNever()
+            .ValueGeneratedOnAdd()
             .HasColumnName("area_id");
 
         builder.Property(e => e.AreaNameEn)

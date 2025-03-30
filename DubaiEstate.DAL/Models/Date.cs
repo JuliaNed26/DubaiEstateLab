@@ -1,6 +1,6 @@
 ﻿namespace DubaiEstate.DAL.Models;
 
-public partial class Date
+public class Date
 {
     public DateOnly FullDate { get; set; }
 

@@ -13,7 +13,7 @@ public class ProcedureConfiguration : IEntityTypeConfiguration<Procedure>
         builder.ToTable("Procedure");
 
         builder.Property(e => e.ProcedureId)
-            .ValueGeneratedNever()
+            .ValueGeneratedOnAdd()
             .HasColumnName("procedure_id");
         builder.Property(e => e.ProcedureNameEn)
             .HasMaxLength(255)

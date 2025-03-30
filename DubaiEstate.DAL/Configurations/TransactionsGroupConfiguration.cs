@@ -13,7 +13,7 @@ public class TransactionsGroupConfiguration : IEntityTypeConfiguration<Transacti
         builder.ToTable("TransactionsGroup");
 
         builder.Property(e => e.TransGroupId)
-            .ValueGeneratedNever()
+            .ValueGeneratedOnAdd()
             .HasColumnName("trans_group_id");
         builder.Property(e => e.TransGroupEn)
             .HasMaxLength(255)

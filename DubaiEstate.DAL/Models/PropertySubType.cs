@@ -1,6 +1,6 @@
 ﻿namespace DubaiEstate.DAL.Models;
 
-public partial class PropertySubType
+public class PropertySubType
 {
     public long PropertySubTypeId { get; set; }
 

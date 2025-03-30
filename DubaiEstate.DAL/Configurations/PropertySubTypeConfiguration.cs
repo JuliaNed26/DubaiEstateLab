@@ -13,7 +13,7 @@ public class PropertySubTypeConfiguration : IEntityTypeConfiguration<PropertySub
         builder.ToTable("PropertySubType");
 
         builder.Property(e => e.PropertySubTypeId)
-            .ValueGeneratedNever()
+            .ValueGeneratedOnAdd()
             .HasColumnName("property_sub_type_id");
         builder.Property(e => e.PropertySubTypeEn)
             .HasMaxLength(255)

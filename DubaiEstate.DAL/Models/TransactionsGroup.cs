@@ -1,6 +1,6 @@
 ﻿namespace DubaiEstate.DAL.Models;
 
-public partial class TransactionsGroup
+public class TransactionsGroup
 {
     public long TransGroupId { get; set; }
 

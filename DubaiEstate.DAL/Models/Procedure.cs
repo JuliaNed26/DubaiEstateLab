@@ -1,6 +1,6 @@
 ﻿namespace DubaiEstate.DAL.Models;
 
-public partial class Procedure
+public class Procedure
 {
     public long ProcedureId { get; set; }
 
