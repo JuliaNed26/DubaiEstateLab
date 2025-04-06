@@ -1,0 +1,65 @@
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model DubaiEstate.BLL.Models.TransactionEntity
+
+@{
+    ViewData["Title"] = "Edit Transaction";
+}
+
+<h1>Edit</h1>
+
+<h4>Transaction</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label class="control-label">Date</label>
+                <p class="form-control-static">@Model.InstanceDate.ToString("yyyy-MM-dd")</p>
+                <input type="hidden" asp-for="InstanceDate" />
+            </div>
+            <div class="form-group">
+                <label asp-for="ProcedureId" class="control-label"></label>
+                <select asp-for="ProcedureId" class="form-control" asp-items="ViewBag.ProcedureId"></select>
+                <span asp-validation-for="ProcedureId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PropertySubTypeId" class="control-label"></label>
+                <select asp-for="PropertySubTypeId" class="form-control" asp-items="ViewBag.PropertySubTypeId"></select>
+                <span asp-validation-for="PropertySubTypeId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AreaId" class="control-label"></label>
+                <select asp-for="AreaId" class="form-control" asp-items="ViewBag.AreaId"></select>
+                <span asp-validation-for="AreaId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ProcedureArea" class="control-label"></label>
+                <input asp-for="ProcedureArea" class="form-control" />
+                <span asp-validation-for="ProcedureArea" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ActualWorth" class="control-label"></label>
+                <input asp-for="ActualWorth" class="form-control" />
+                <span asp-validation-for="ActualWorth" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RentValue" class="control-label"></label>
+                <input asp-for="RentValue" class="form-control" />
+                <span asp-validation-for="RentValue" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

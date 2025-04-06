@@ -8,6 +8,8 @@ public class MapperProfile : Profile
 {
     public MapperProfile()
     {
+        CreateMap(typeof(PaginatedResult<>), typeof(PaginatedResult<>));
+        
         CreateMap<Area, AreaEntity>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.AreaId))
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.AreaNameEn))
@@ -32,8 +34,9 @@ public class MapperProfile : Profile
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.PropertyTypeEn))
             .ReverseMap();
 
-        CreateMap<Transaction, TransactionEntity>().ReverseMap();
-        CreateMap<TransactionKeys, TransactionKeysEntity>().ReverseMap();
+        CreateMap<Transaction, TransactionEntity>()
+            .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.InstanceDateNavigation))
+            .ReverseMap();
 
         CreateMap<TransactionsGroup, TransactionsGroupEntity>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.TransGroupId))

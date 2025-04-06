@@ -1,0 +1,66 @@
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model DubaiEstate.BLL.Models.TransactionEntity
+
+@{
+    ViewData["Title"] = "Transaction Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Transaction</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Procedure)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Procedure.Name)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Date.Date)
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Date.Date.ToString("yyyy-MM-dd")
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.PropertySubType)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.PropertySubType.Name)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Area)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Area.Name)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ProcedureArea)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ProcedureArea)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ActualWorth)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ActualWorth)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.RentValue)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.RentValue)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit"
+       asp-route-id="@Model.Id"
+       asp-route-procedureId="@Model.Procedure.Id"
+       asp-route-Date.Date="@Model.Date.Date.ToString("yyyy-MM-dd")"
+       asp-route-propertySubTypeId="@Model.PropertySubType.Id"
+       asp-route-areaId="@Model.Area.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

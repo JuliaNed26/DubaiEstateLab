@@ -1,0 +1,103 @@
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model DubaiEstate.DAL.Models.PaginatedResult<DubaiEstate.BLL.Models.TransactionEntity>
+
+@{
+    ViewData["Title"] = "Transactions";
+    var prevDisabled = Model.PageNumber == 1 ? "disabled" : "";
+    var nextDisabled = Model.PageNumber == Model.TotalPages ? "disabled" : "";
+}
+
+<h1>Transactions</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New</a>
+</p>
+
+<div class="row mb-3">
+    <div class="col-md-6">
+        <form method="get" class="form-inline">
+            <div class="form-group mr-2">
+                <label for="pageSize" class="mr-2">Items per page:</label>
+                <select name="pageSize" onchange="this.form.submit()" class="form-control">
+                    <option value="10" selected="@(Model.PageSize == 10)">10</option>
+                    <option value="25" selected="@(Model.PageSize == 25)">25</option>
+                    <option value="50" selected="@(Model.PageSize == 50)">50</option>
+                    <option value="100" selected="@(Model.PageSize == 100)">100</option>
+                </select>
+                <input type="hidden" name="pageNumber" value="1" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Procedure</th>
+            <th>Date</th>
+            <th>Property Type</th>
+            <th>Area</th>
+            <th>Area (m²)</th>
+            <th>Actual Worth</th>
+            <th>Rent Value</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Items)
+        {
+            <tr>
+                <td>@(item.Procedure?.Name ?? "N/A")</td>
+                <td>@(item.Date?.Date.ToString("yyyy-MM-dd") ?? "N/A")</td>
+                <td>@(item.PropertySubType?.Name ?? "N/A")</td>
+                <td>@(item.Area?.Name ?? "N/A")</td>
+                <td>@Html.DisplayFor(modelItem => item.ProcedureArea)</td>
+                <td>@Html.DisplayFor(modelItem => item.ActualWorth)</td>
+                <td>@Html.DisplayFor(modelItem => item.RentValue)</td>
+                <td>
+                    <div class="btn-group btn-group-sm">
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-primary">Edit</a>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-info">Details</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger">Delete</a>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="row">
+    <div class="col-md-6">
+        <p>Showing @((Model.PageNumber - 1) * Model.PageSize + 1) to 
+            @Math.Min(Model.PageNumber * Model.PageSize, Model.TotalCount) of @Model.TotalCount transactions</p>
+    </div>
+    <div class="col-md-6">
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-end">
+                <li class="page-item @prevDisabled">
+                    <a class="page-link" 
+                       asp-action="Index"
+                       asp-route-pageNumber="@(Model.PageNumber - 1)"
+                       asp-route-pageSize="@Model.PageSize">Previous</a>
+                </li>
+                
+                @for (int i = Model.PageNumber; i <= Math.Min(Model.PageNumber + 5, Model.TotalPages); i++)
+                {
+                    <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                        <a class="page-link" 
+                           asp-action="Index"
+                           asp-route-pageNumber="@i"
+                           asp-route-pageSize="@Model.PageSize">@i</a>
+                    </li>
+                }
+                
+                <li class="page-item @nextDisabled">
+                    <a class="page-link" 
+                       asp-action="Index"
+                       asp-route-pageNumber="@(Model.PageNumber + 1)"
+                       asp-route-pageSize="@Model.PageSize">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>

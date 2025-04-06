@@ -12,6 +12,8 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="14.0.0" />
+    <PackageReference Include="Microsoft.AnalysisServices" Version="19.94.1.1" />
+    <PackageReference Include="Microsoft.AnalysisServices.AdomdClient" Version="19.94.1.1" />
   </ItemGroup>
 
 </Project>

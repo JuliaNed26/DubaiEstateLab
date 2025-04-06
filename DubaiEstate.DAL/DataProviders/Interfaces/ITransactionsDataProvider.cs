@@ -5,13 +5,13 @@ namespace DubaiEstate.DAL.DataProviders.Interfaces;
 
 public interface ITransactionsDataProvider
 {
-    Task<Result<Transaction>> GetAsync(TransactionKeys transactionKeys);
+    Task<Result<Transaction>> GetAsync(long id);
     
-    Task<List<Transaction>> GetAllAsync();
+    Task<PaginatedResult<Transaction>> GetAllAsync(int pageNum, int pageSize);
     
     Task<Transaction> CreateAsync(Transaction transaction);
     
     Task<Result<Transaction>> UpdateAsync(Transaction transaction);
     
-    Task DeleteAsync(TransactionKeys transactionKeys);
+    Task DeleteAsync(long id);
 }

@@ -8,7 +8,7 @@ public class TransactionConfiguration : IEntityTypeConfiguration<Transaction>
 {
     public void Configure(EntityTypeBuilder<Transaction> builder)
     {
-        builder.HasNoKey();
+        builder.HasKey(x => x.Id);
 
         builder.Property(e => e.ActualWorth).HasColumnName("actual_worth");
         builder.Property(e => e.AreaId).HasColumnName("area_id");
@@ -22,5 +22,11 @@ public class TransactionConfiguration : IEntityTypeConfiguration<Transaction>
             .HasForeignKey(d => d.InstanceDate)
             .OnDelete(DeleteBehavior.ClientSetNull)
             .HasConstraintName("FK_Transactions_Date");
+        builder.HasOne(d => d.Procedure).WithMany()
+            .HasForeignKey(d => d.ProcedureId);
+        builder.HasOne(d => d.Area).WithMany()
+            .HasForeignKey(d => d.AreaId);
+        builder.HasOne(d => d.PropertySubType).WithMany()
+            .HasForeignKey(d => d.PropertySubTypeId);
     }
 }

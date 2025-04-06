@@ -16,23 +16,41 @@ public class TransactionsDataProvider : ITransactionsDataProvider
         _context = context;
     }
 
-    public async Task<Result<Transaction>> GetAsync(TransactionKeys transactionKeys)
+    public async Task<Result<Transaction>> GetAsync(long id)
     {
         var foundTransaction = await _context.Transactions
-            .Where(GetKeyEqualityExpression(transactionKeys))
-            .FirstOrDefaultAsync();
+            .Include(t => t.Area)
+            .Include(t => t.Procedure)
+            .Include(t => t.PropertySubType)
+            .Include(t => t.InstanceDateNavigation)
+            .FirstOrDefaultAsync(t => t.Id == id);
 
         return foundTransaction ?? new Result<Transaction>(
-            new EntityNotFoundException($"Transaction with Procedure id " +
-                                        $"'{transactionKeys.ProcedureId}'" +
-                                        $" Area id '{transactionKeys.AreaId}'" +
-                                        $" Date {transactionKeys.InstanceDate}" +
-                                        $" Property sub type id '{transactionKeys.PropertySubTypeId}' was not found"));
+            new EntityNotFoundException($"Transaction with id '{id}' was not found"));
     }
 
-    public async Task<List<Transaction>> GetAllAsync()
+    public async Task<PaginatedResult<Transaction>> GetAllAsync(int pageNum, int pageSize)
     {
-        return await _context.Transactions.ToListAsync();
+        var query = _context.Transactions
+            .Include(t => t.Procedure)
+            .Include(t => t.InstanceDateNavigation)
+            .Include(t => t.PropertySubType)
+            .Include(t => t.Area)
+            .OrderBy(t => t.InstanceDate);
+
+        var totalCount = await query.CountAsync();
+        var items = await query
+            .Skip((pageNum - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return new PaginatedResult<Transaction>
+        {
+            Items = items,
+            TotalCount = totalCount,
+            PageNumber = pageNum,
+            PageSize = pageSize
+        };
     }
 
     public async Task<Transaction> CreateAsync(Transaction transaction)
@@ -45,7 +63,7 @@ public class TransactionsDataProvider : ITransactionsDataProvider
 
     public async Task<Result<Transaction>> UpdateAsync(Transaction transaction)
     {
-        var getResult = await GetAsync(transaction);
+        var getResult = await GetAsync(transaction.Id);
         if (getResult.IsFaulted)
         {
             return getResult;
@@ -54,19 +72,18 @@ public class TransactionsDataProvider : ITransactionsDataProvider
         _context.Entry(transaction).State = EntityState.Modified;
         await _context.SaveChangesAsync();
         
-        return await _context.Transactions.SingleAsync(GetKeyEqualityExpression(transaction));
+        return await _context.Transactions
+            .Include(t => t.Area)
+            .Include(t => t.Procedure)
+            .Include(t => t.PropertySubType)
+            .Include(t => t.InstanceDateNavigation)
+            .SingleAsync(t => t.Id == transaction.Id);
     }
 
-    public Task DeleteAsync(TransactionKeys transactionKeys)
+    public async Task DeleteAsync(long id)
     {
-        throw new NotImplementedException();
-    }
-
-    private static Expression<Func<Transaction, bool>> GetKeyEqualityExpression(TransactionKeys transactionKeys)
-    {
-        return tr => tr.ProcedureId == transactionKeys.ProcedureId
-                     && tr.AreaId == transactionKeys.AreaId
-                     && tr.InstanceDate == transactionKeys.InstanceDate
-                     && tr.PropertySubTypeId == transactionKeys.PropertySubTypeId;
+        var transactionEntity = await _context.Transactions.SingleAsync(t => t.Id == id);
+        _context.Transactions.Remove(transactionEntity);
+        await _context.SaveChangesAsync(); 
     }
 }
