@@ -7,57 +7,234 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/DubaiEstateUI.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <style>
+        /* Custom styles for the sidebar */
+        #sidebar {
+            width: 300px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            right: -300px;
+            background: white;
+            box-shadow: -2px 0 10px rgba(0,0,0,0.15);
+            transition: right 0.3s ease;
+            z-index: 1050;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        #sidebar.show {
+            right: 0;
+        }
+        
+        #sidebarToggle {
+            position: fixed;
+            right: 20px;
+            top: 20px;
+            z-index: 1040;
+            background: dodgerblue;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 12px 20px;
+            font-weight: 500;
+            height: 48px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        #sidebarToggle:hover {
+            background: cornflowerblue;
+            transform: translateY(-1px);
+        }
+        
+        #sidebarClose {
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        #sidebarClose:hover {
+            background: #c82333;
+            transform: scale(1.1);
+        }
+        
+        .sidebar-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1040;
+            display: none;
+        }
+        
+        .sidebar-backdrop.show {
+            display: block;
+        }
+        
+        .sidebar-section {
+            margin-bottom: 25px;
+        }
+        
+        .sidebar-section h5 {
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            color: #333;
+            font-weight: 600;
+        }
+        
+        .nav-link {
+            padding: 8px 12px;
+            border-radius: 4px;
+            margin-bottom: 4px;
+            transition: all 0.2s;
+        }
+        
+        .nav-link:hover {
+            background-color: #f8f9fa;
+            color: cornflowerblue !important;
+        }
+    </style>
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-light mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">DubaiEstate</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Areas" asp-action="Index">Areas</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Procedures" asp-action="Index">Procedures</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="PropertyTypes" asp-action="Index">Property Types</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="PropertySubTypes" asp-action="Index">Property Sub Types</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="TransactionsGroups" asp-action="Index">Transaction Groups</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Transactions" asp-action="Index">Transactions</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
+                <a class="navbar-brand fs-2" asp-area="" asp-controller="Transactions" asp-action="Index">DubaiEstate</a>
             </div>
         </nav>
     </header>
+    
+    <!-- Sidebar Toggle Button -->
+    <button id="sidebarToggle" class="btn">
+        <i class="bi bi-list"></i> Open Menu
+    </button>
+    
+    <!-- Sidebar Backdrop -->
+    <div id="sidebarBackdrop" class="sidebar-backdrop"></div>
+    
+    <!-- Sidebar Navigation -->
+    <div id="sidebar">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="mb-0">Navigation Menu</h4>
+            <button id="sidebarClose" class="btn" title="Close menu">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+        
+        <div class="sidebar-section">
+            <h5><i class="bi bi-table me-2"></i>Dimensions</h5>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-controller="Areas" asp-action="Index">
+                        <i class="bi bi-geo-alt me-2"></i>Areas
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-controller="Procedures" asp-action="Index">
+                        <i class="bi bi-clipboard-data me-2"></i>Procedures
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-controller="PropertyTypes" asp-action="Index">
+                        <i class="bi bi-house me-2"></i>Property Types
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-controller="PropertySubTypes" asp-action="Index">
+                        <i class="bi bi-house-door me-2"></i>Property Sub Types
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-controller="TransactionsGroups" asp-action="Index">
+                        <i class="bi bi-collection me-2"></i>Transaction Groups
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-controller="Transactions" asp-action="Index">
+                        <i class="bi bi-cash-stack me-2"></i>Transactions
+                    </a>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="sidebar-section">
+            <h5><i class="bi bi-bar-chart me-2"></i>Visualizations</h5>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-controller="Visualization" asp-action="TransactionPercentage">
+                        <i class="bi bi-pie-chart me-2"></i>Transaction Percentage
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-controller="Visualization" asp-action="AverageWorthOverYears">
+                        <i class="bi bi-graph-up me-2"></i>Average Worth Over Years
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-controller="Visualization" asp-action="TransactionsRadar">
+                        <i class="bi bi-radar me-2"></i>Transactions Comparison
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-controller="Visualization" asp-action="ProcedureAreaSparkline">
+                        <i class="bi bi-lightning-charge me-2"></i>Procedure Area Trend
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-controller="Visualization" asp-action="PropertyTypeDistribution">
+                        <i class="bi bi-diagram-3 me-2"></i>Property Type Distribution
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
-
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - DubaiEstateUI - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
+    
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Sidebar toggle functionality
+        $(document).ready(function() {
+            $('#sidebarToggle').click(function() {
+                $('#sidebar').toggleClass('show');
+                $('#sidebarBackdrop').toggleClass('show');
+            });
+            
+            $('#sidebarClose, #sidebarBackdrop').click(function() {
+                $('#sidebar').removeClass('show');
+                $('#sidebarBackdrop').removeClass('show');
+            });
+            
+            // Close sidebar when clicking a nav link (for mobile)
+            $('.nav-link').click(function() {
+                if ($(window).width() < 992) {
+                    $('#sidebar').removeClass('show');
+                    $('#sidebarBackdrop').removeClass('show');
+                }
+            });
+        });
+    </script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

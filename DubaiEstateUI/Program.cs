@@ -1,4 +1,5 @@
 using DubaiEstate.BLL.DependencyInjection;
+using DubaiEstate.BLL.Jobs;
 using DubaiEstate.DAL;
 using DubaiEstate.DAL.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
@@ -16,13 +17,15 @@ builder.Services.AddDatabaseLayerServices();
 builder.Services.AddBusinessLogicLayerServices();
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddHostedService<CubeProcessingBackgroundJob>();
+
 builder.Services.AddMemoryCache();
 
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
+    app.UseExceptionHandler("/Transactions/Error");
     app.UseHsts();
 }
 
@@ -35,6 +38,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}");
+    pattern: "{controller=Transactions}/{action=Index}");
 
 app.Run();

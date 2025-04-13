@@ -1,0 +1,99 @@
+@{
+    ViewData["Title"] = "Procedure Area Trend";
+}
+
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header bg-white">
+            <h5 class="mb-0">Procedure Area Trend Over Years</h5>
+        </div>
+        <div class="card-body">
+            <!-- Sparkline Container -->
+            <div class="sparkline-container mb-4" style="height: 60px;">
+                <canvas id="areaSparkline"></canvas>
+            </div>
+            
+            <!-- Data Table -->
+            <div class="table-responsive">
+                <table class="table table-sm table-bordered">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Year</th>
+                            <th>Area (m²)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < ViewBag.ChartData.Labels.Count; i++)
+                        {
+                            <tr>
+                                <td>@ViewBag.ChartData.Labels[i]</td>
+                                <td>@ViewBag.ChartData.Data[i].ToString("N0")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get data from server
+            var chartData = @Html.Raw(Json.Serialize(ViewBag.ChartData));
+            
+            // Sparkline configuration
+            var ctx = document.getElementById('areaSparkline').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: chartData.labels,
+                    datasets: [{
+                        data: chartData.data,
+                        borderColor: '#4e73df',
+                        borderWidth: 2,
+                        backgroundColor: 'rgba(78, 115, 223, 0.05)',
+                        fill: true,
+                        pointRadius: 0,
+                        tension: 0.3,
+                        borderJoinStyle: 'round'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { enabled: false }
+                    },
+                    scales: {
+                        x: { display: false },
+                        y: { display: false }
+                    },
+                    interaction: { intersect: false }
+                }
+            });
+        });
+    </script>
+
+    <style>
+        .sparkline-container {
+            position: relative;
+            width: 100%;
+            min-height: 60px;
+            background-color: #f8fafc;
+            border-radius: 4px;
+            padding: 5px;
+        }
+        
+        .table-sm {
+            font-size: 0.875rem;
+        }
+        
+        .table-sm th, .table-sm td {
+            padding: 0.5rem;
+        }
+    </style>
+}

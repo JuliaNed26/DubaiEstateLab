@@ -20,3 +20,7 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.nav.navbar-nav.navbar-right li a {
+  color: white;
+}

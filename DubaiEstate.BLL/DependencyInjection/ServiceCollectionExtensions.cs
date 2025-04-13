@@ -18,6 +18,10 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddScoped<IPropertyTypeRepository, PropertyTypeRepository>();
         serviceCollection.AddScoped<ITransactionsGroupRepository, TransactionsGroupRepository>();
         serviceCollection.AddScoped<ITransactionRepository, TransactionRepository>();
+
+        serviceCollection.AddSingleton<ICubeProcessingService, CubeProcessingService>();
+        serviceCollection.AddScoped<IOlapService, OlapService>();
+        serviceCollection.AddScoped<IMdxQueryService, MdxQueryService>();
         
         return serviceCollection;
     }

@@ -56,6 +56,20 @@ public class TransactionsDataProvider : ITransactionsDataProvider
     public async Task<Transaction> CreateAsync(Transaction transaction)
     {
         _context.Entry(transaction).State = EntityState.Added;
+        var foundData =
+            await _context.Dates.FirstOrDefaultAsync(date => date.FullDate == transaction.InstanceDate);
+        if (foundData == null)
+        {
+            var newDate = new Date()
+            {
+                FullDate = transaction.InstanceDate,
+                Day = transaction.InstanceDate.Day,
+                Month = transaction.InstanceDate.Month,
+                Year = transaction.InstanceDate.Year,
+                MonthYear = $"{transaction.InstanceDate.Month}.{transaction.InstanceDate.Year}"
+            };
+            await _context.Dates.AddAsync(newDate);
+        }
         await _context.SaveChangesAsync();
         
         return transaction;

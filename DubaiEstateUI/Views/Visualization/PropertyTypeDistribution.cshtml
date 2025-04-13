@@ -1,0 +1,128 @@
+@{
+    var chartData = ViewBag.ChartData as ChartData;
+    var totalCount = ViewBag.TotalCount as string;
+}
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5>Property Type Distribution</h5>
+        <span class="badge bg-primary">Total: @totalCount</span>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <div style="height: 350px;">
+                    <canvas id="propertyTypeChart"></canvas>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Property Type</th>
+                                <th class="text-end">Count</th>
+                                <th class="text-end">Percentage</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < chartData.Labels.Count; i++)
+                            {
+                                <tr>
+                                    <td>@chartData.Labels[i]</td>
+                                    <td class="text-end">@chartData.Dataset.Data[i].ToString("N0")</td>
+                                    <td class="text-end">@chartData.Percentages[i].ToString("N1")%</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Load Chart.js first -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+    
+    <!-- Then your chart code -->
+    <script>
+        // Wait for both DOM and Chart.js to be ready
+        function initializeChart() {
+            try {
+                var chartData = @Html.Raw(Json.Serialize(ViewBag.ChartData));
+                console.log("Chart data loaded:", chartData);
+                
+                if (!chartData || !chartData.labels || chartData.labels.length === 0) {
+                    console.error("No valid chart data available");
+                    return;
+                }
+
+                var ctx = document.getElementById('propertyTypeChart');
+                if (!ctx) {
+                    console.error("Canvas element not found");
+                    return;
+                }
+
+                new Chart(ctx.getContext('2d'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: chartData.labels,
+                        datasets: [{
+                            label: chartData.dataset.label,
+                            data: chartData.dataset.data,
+                            backgroundColor: chartData.dataset.backgroundColors,
+                            borderWidth: chartData.dataset.borderWidth
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        var percentage = chartData.percentages[context.dataIndex];
+                                        return `${context.label}: ${context.raw.toLocaleString()} (${percentage.toFixed(1)}%)`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            } catch (e) {
+                console.error("Chart initialization failed:", e);
+            }
+        }
+
+        // Check if Chart.js is already loaded
+        if (typeof Chart !== 'undefined') {
+            initializeChart();
+        } else {
+            // Fallback if script loading fails
+            document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"><\/script>');
+            var checkTimer = setInterval(function() {
+                if (typeof Chart !== 'undefined') {
+                    clearInterval(checkTimer);
+                    initializeChart();
+                }
+            }, 100);
+        }
+    </script>
+
+    <style>
+        #propertyTypeChart {
+            display: block;
+            width: 100% !important;
+            height: 100% !important;
+        }
+        .chart-container {
+            position: relative;
+            min-height: 350px;
+        }
+    </style>
+}

@@ -1,0 +1,93 @@
+@* Views/Visualization/TransactionsRadar.cshtml *@
+@{
+    ViewData["Title"] = "Transactions Comparison: Sales vs All";
+}
+
+<div class="container mt-5">
+    <h2>Transactions Comparison: Sales vs All</h2>
+    <div class="chart-container" style="position: relative; height:500px; width:100%">
+        <canvas id="transactionsRadarChart"></canvas>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var chartData = @Html.Raw(Json.Serialize(ViewBag.ChartData));
+            
+            var ctx = document.getElementById('transactionsRadarChart').getContext('2d');
+            var chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: chartData.labels,
+                    datasets: [
+                        {
+                            label: 'Sales',
+                            data: chartData.salesData,
+                            backgroundColor: chartData.backgroundColors[0],
+                            borderColor: chartData.borderColors[0],
+                            borderWidth: 2,
+                            pointBackgroundColor: chartData.borderColors[0],
+                            pointRadius: 4
+                        },
+                        {
+                            label: 'All Transactions',
+                            data: chartData.allData,
+                            backgroundColor: chartData.backgroundColors[1],
+                            borderColor: chartData.borderColors[1],
+                            borderWidth: 2,
+                            pointBackgroundColor: chartData.borderColors[1],
+                            pointRadius: 4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + context.raw.toLocaleString();
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        r: {
+                            angleLines: {
+                                display: true
+                            },
+                            suggestedMin: 0,
+                            ticks: {
+                                precision: 0
+                            }
+                        }
+                    },
+                    elements: {
+                        line: {
+                            tension: 0.1
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+}
+
+<style>
+    .chart-container {
+        max-width: 600px;
+        margin: 20px auto;
+    }
+    
+    canvas {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 20px;
+    }
+</style>
